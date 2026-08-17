@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Private = () => {
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
     useEffect(() => {
         const token = localStorage.getItem("token");
+
+        if (!token) {
+            navigate("/login");
+            return
+        }
 
         console.log(token);
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/private`, {
@@ -12,8 +19,17 @@ export const Private = () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    localStorage.removeItem("token");
+                    navigate("/login");
+                    return null;
+                }
+
+                return response.json();
+            })
             .then((data) => {
+                if (!data) return;
                 console.log(data);
                 setMessage(data.message);
             });

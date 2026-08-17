@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 export const Login = () => {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const handleSubmit = async (e) => {
@@ -20,6 +23,7 @@ export const Login = () => {
 
         if (data.token) {
             localStorage.setItem("token", data.token);
+            navigate("/private");
         }
     };
     return (
